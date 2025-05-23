@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+  n8n:
+    image: chandrabachtiar25/wa-simple:latest
+    container_name: wa-simple
+    restart: always
+    ports:
+      - "127.0.0.1:3000:3000"
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.n8n.rule=Host(`wa.${MAIN_DOMAIN}`)
+      - traefik.http.routers.n8n.tls=true
+      - traefik.http.routers.n8n.entrypoints=web,websecure
+      - traefik.http.routers.n8n.tls.certresolver=mytlschallenge
+      - traefik.http.middlewares.n8n.headers.SSLRedirect=true
+      - traefik.http.middlewares.n8n.headers.STSSeconds=315360000
+      - traefik.http.middlewares.n8n.headers.browserXSSFilter=true
+      - traefik.http.middlewares.n8n.headers.contentTypeNosniff=true
+      - traefik.http.middlewares.n8n.headers.forceSTSHeader=true
+      - traefik.http.middlewares.n8n.headers.SSLHost=${MAIN_DOMAIN}
+      - traefik.http.middlewares.n8n.headers.STSIncludeSubdomains=true
+      - traefik.http.middlewares.n8n.headers.STSPreload=true
+      - traefik.http.routers.n8n.middlewares=n8n@docker
+    environment:
+      - PORT=3000
+      - NODE_ENV=production
+      - AUTH_USERNAME=${AUTH_USERNAME}
+      - AUTH_PASSWORD=${AUTH_PASSWORD}
+      - APIKEY=${APIKEY}
+    networks:
+      - traefik-network
+
+volumes:
+  n8n_data:
+
+networks:
+  traefik-network:
+    external: true
