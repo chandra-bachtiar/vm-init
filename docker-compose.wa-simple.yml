@@ -2,7 +2,7 @@ version: '3'
 
 services:
   wa:
-    image: chandrabachtiar25/wa-simple:1.0
+    image: chandrabachtiar25/wa-simple:1.1
     container_name: wa
     restart: always
     ports:
@@ -28,6 +28,7 @@ services:
       - AUTH_USERNAME=${AUTH_USERNAME}
       - AUTH_PASSWORD=${AUTH_PASSWORD}
       - APIKEY=${APIKEY}
+      - N8N_APIKEY=${N8N_APIKEY}
     networks:
       - traefik-network
 
