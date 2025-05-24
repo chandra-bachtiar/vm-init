@@ -2,7 +2,7 @@ version: '3'
 
 services:
   wa:
-    image: chandrabachtiar25/wa-simple:1.1
+    image: chandrabachtiar25/wa-simple:1.2
     container_name: wa
     restart: always
     ports:
