@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+  waha:
+    restart: always
+    image: devlikeapro/waha:latest
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "10"
+    ports:
+      - '127.0.0.1:3000:3000'
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.waha.rule=Host(`waha.${MAIN_DOMAIN}`)
+      - traefik.http.routers.waha.tls=true
+      - traefik.http.routers.waha.entrypoints=web,websecure
+      - traefik.http.routers.waha.tls.certresolver=mytlschallenge
+      - traefik.http.middlewares.waha.headers.SSLRedirect=true
+      - traefik.http.middlewares.waha.headers.STSSeconds=315360000
+      - traefik.http.middlewares.waha.headers.browserXSSFilter=true
+      - traefik.http.middlewares.waha.headers.contentTypeNosniff=true
+      - traefik.http.middlewares.waha.headers.forceSTSHeader=true
+      - traefik.http.middlewares.waha.headers.SSLHost=${MAIN_DOMAIN}
+      - traefik.http.middlewares.waha.headers.STSIncludeSubdomains=true
+      - traefik.http.middlewares.waha.headers.STSPreload=true
+      - traefik.http.routers.waha.middlewares=waha@docker
+    volumes:
+      - './sessions:/app/.sessions'
+      - './.media:/app/.media'
+    env_file:
+      - .env
+    networks:
+      - traefik-network
+
+networks:
+  traefik-network:
+    external: true
